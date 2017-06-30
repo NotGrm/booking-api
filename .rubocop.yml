@@ -1,0 +1,27 @@
+require:
+  - rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.3
+  # Cop names are not d§splayed in offense messages by default. Change behavior
+  # by overriding DisplayCopNames, or by giving the -D/--display-cop-names
+  # option.
+  DisplayCopNames: true
+
+  Exclude:
+    - 'vendor/**/*'
+    - 'db/*'
+    - 'tmp/**/*'
+    - 'bin/**/*'
+
+
+# Checks if there is a magic comment to enforce string literals
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/SymbolArray:
+  Enabled: false
+
+# Limit lines to 80 characters.
+Metrics/LineLength:
+  Enabled: false
