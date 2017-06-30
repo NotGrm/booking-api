@@ -14,6 +14,14 @@ AllCops:
     - 'tmp/**/*'
     - 'bin/**/*'
 
+Metrics/BlockLength:
+  Enabled: false
+
+Style/Documentation:
+  Exclude:
+    - 'db/migrate/*'
+    - 'spec/**/*'
+    - 'test/**/*'
 
 # Checks if there is a magic comment to enforce string literals
 Style/FrozenStringLiteralComment:
