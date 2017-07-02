@@ -10,6 +10,8 @@ require 'rspec/rails'
 require 'shoulda/matchers'
 
 require 'support/factory_girl'
+require 'support/headers_helpers'
+require 'support/json_response_helpers'
 
 # Add additional requires below this line. Rails is not loaded until this point!
 

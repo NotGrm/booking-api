@@ -1,6 +1,8 @@
 FactoryGirl.define do
   factory :rental do
-    name 'MyString'
-    daily_rate 1
+    sequence :name do |n|
+      "rental#{n}"
+    end
+    daily_rate 100
   end
 end
