@@ -17,6 +17,13 @@ AllCops:
 Metrics/BlockLength:
   Enabled: false
 
+# Limit lines to 80 characters.
+Metrics/LineLength:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
 Style/Documentation:
   Exclude:
     - 'db/migrate/*'
@@ -30,6 +37,5 @@ Style/FrozenStringLiteralComment:
 Style/SymbolArray:
   Enabled: false
 
-# Limit lines to 80 characters.
-Metrics/LineLength:
-  Enabled: false
+RSpec/MultipleExpectations:
+  Max: 3
