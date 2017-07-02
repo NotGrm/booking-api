@@ -9,10 +9,10 @@ RSpec.describe Booking, type: :model do
   end
 
   describe 'validations' do
-    let(:valid_dates_booking) { FactoryGirl.build(:booking, start_at: Date.parse('2017-06-30'), end_at: Date.parse('2017-07-01')) }
-    let(:invalid_dates_booking) { FactoryGirl.build(:booking, start_at: '2017-06-30', end_at: '2017-06-29') }
-    let(:valid_email_booking) { FactoryGirl.build(:booking, client_email: 'valid-email@example.org') }
-    let(:invalid_email_booking) { FactoryGirl.build(:booking, client_email: 'invalid-email@example') }
+    let(:valid_dates_booking) { build(:booking, start_at: Date.parse('2017-06-30'), end_at: Date.parse('2017-07-01')) }
+    let(:invalid_dates_booking) { build(:booking, start_at: '2017-06-30', end_at: '2017-06-29') }
+    let(:valid_email_booking) { build(:booking, client_email: 'valid-email@example.org') }
+    let(:invalid_email_booking) { build(:booking, client_email: 'invalid-email@example') }
 
     it { is_expected.to validate_presence_of(:client_email) }
 
@@ -37,6 +37,15 @@ RSpec.describe Booking, type: :model do
     end
 
     it { is_expected.to validate_presence_of(:price) }
+
+    it 'validates that rental is available' do
+      rental = create(:rental) do |r|
+        create(:booking, rental: r, start_at: '2017-07-02', end_at: '2017-07-03')
+      end
+
+      booking = build(:booking, rental: rental, start_at: '2017-07-02', end_at: '2017-07-03')
+      expect(booking).not_to be_valid
+    end
   end
 
   describe 'associations' do
