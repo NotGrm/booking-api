@@ -51,4 +51,34 @@ RSpec.describe Booking, type: :model do
   describe 'associations' do
     it { is_expected.to belong_to(:rental) }
   end
+
+  describe 'callbacks' do
+    it 'calculates booking price' do
+      rental = create(:rental, daily_rate: 100)
+      booking = build(:booking, rental: rental, start_at: '2017-07-02', end_at: '2017-07-07')
+
+      booking.save
+
+      expect(booking.price).to eq(500)
+    end
+  end
+
+  describe 'methods' do
+    describe '#stay_duration' do
+      it 'returns the duration of the stay' do
+        booking = build(:booking, start_at: '2017-07-02', end_at: '2017-07-07')
+        expect(booking.stay_duration).to eq(5)
+      end
+
+      it 'returns nil if start_at is blank' do
+        booking = build(:booking, start_at: '')
+        expect(booking.stay_duration).to be_nil
+      end
+
+      it 'returns nil if end_at is blank' do
+        booking = build(:booking, end_at: '')
+        expect(booking.stay_duration).to be_nil
+      end
+    end
+  end
 end
