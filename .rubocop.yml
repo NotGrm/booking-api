@@ -38,4 +38,4 @@ Style/SymbolArray:
   Enabled: false
 
 RSpec/MultipleExpectations:
-  Max: 3
+  Max: 4
