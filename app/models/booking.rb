@@ -16,7 +16,7 @@ class Booking < ApplicationRecord
   validate :end_at_is_greater_than_start_at
   validate :rental_is_available
 
-  before_save :calculate_price
+  before_validation :calculate_price
 
   scope :start_before, ->(date) { where('bookings.start_at < ?', date) }
   scope :end_after, ->(date) { where('bookings.end_at > ?', date) }

@@ -9,6 +9,8 @@ RSpec.describe Booking, type: :model do
   end
 
   describe 'validations' do
+    subject { build(:booking) }
+
     let(:valid_dates_booking) { build(:booking, start_at: Date.parse('2017-06-30'), end_at: Date.parse('2017-07-01')) }
     let(:invalid_dates_booking) { build(:booking, start_at: '2017-06-30', end_at: '2017-06-29') }
     let(:valid_email_booking) { build(:booking, client_email: 'valid-email@example.org') }
@@ -16,7 +18,7 @@ RSpec.describe Booking, type: :model do
 
     it { is_expected.to validate_presence_of(:client_email) }
 
-    it 'validates that :client_email is a valid email' do
+    it 'validates if :client_email is a valid email' do
       expect(valid_email_booking).to be_valid
     end
 
@@ -35,8 +37,6 @@ RSpec.describe Booking, type: :model do
     it 'does not validate if :end_at is less than :start_at' do
       expect(invalid_dates_booking).not_to be_valid
     end
-
-    it { is_expected.to validate_presence_of(:price) }
 
     it 'validates that rental is available' do
       rental = create(:rental) do |r|
