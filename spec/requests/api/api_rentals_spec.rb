@@ -5,24 +5,40 @@ RSpec.describe 'Api::Rentals', type: :request do
   let(:object_hash) { serializer.object_hash(Api::RentalResource.new(rental, nil)) }
 
   describe 'GET /api/rentals' do
-    before do
-      create_list(:rental, 10)
-      get '/api/rentals', headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        get '/api/rentals'
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'responds with a 200 http status code' do
-      expect(response).to have_http_status(200)
-    end
+    context 'when authenticated' do
+      before do
+        create_list(:rental, 10)
+        get '/api/rentals', headers: headers
+      end
 
-    it 'returns all rentals' do
-      expect(json_response['data'].length).to eq(10)
+      it 'responds with a 200 http status code' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns all rentals' do
+        expect(json_response['data'].length).to eq(10)
+      end
     end
   end
 
   describe 'GET /api/rentals/:id' do
-    context 'when looking for existing rental' do
-      let(:rental) { create(:rental) }
+    let(:rental) { create(:rental) }
 
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        get "/api/rentals/#{rental.id}"
+        expect(response).to have_http_status(401)
+      end
+    end
+
+    context 'when authenticated and looking for existing rental' do
       before do
         get "/api/rentals/#{rental.id}", headers: headers
       end
@@ -42,7 +58,7 @@ RSpec.describe 'Api::Rentals', type: :request do
       end
     end
 
-    context 'when looking for a non existing rental' do
+    context 'when authenticated looking for a non existing rental' do
       before { get '/api/rentals/9999', headers: headers }
 
       it 'responds with a 404 http status code' do
@@ -62,22 +78,31 @@ RSpec.describe 'Api::Rentals', type: :request do
       }.to_json
     end
 
-    before do
-      post '/api/rentals', params: rental_params, headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        post '/api/rentals', params: rental_params
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'responds with a 201 http status code' do
-      expect(response).to have_http_status(201)
-    end
+    context 'when authenticated' do
+      before do
+        post '/api/rentals', params: rental_params, headers: headers
+      end
 
-    it 'creates a new rental' do
-      expect(json_response['data']['type']).to eq('rentals')
-      expect(json_response['data']['type']).not_to be_nil
-    end
+      it 'responds with a 201 http status code' do
+        expect(response).to have_http_status(201)
+      end
 
-    it 'sets rental attributes' do
-      expect(json_response['data']['attributes']['name']).to eq(rental[:name])
-      expect(json_response['data']['attributes']['daily-rate']).to eq(rental[:daily_rate])
+      it 'creates a new rental' do
+        expect(json_response['data']['type']).to eq('rentals')
+        expect(json_response['data']['type']).not_to be_nil
+      end
+
+      it 'sets rental attributes' do
+        expect(json_response['data']['attributes']['name']).to eq(rental[:name])
+        expect(json_response['data']['attributes']['daily-rate']).to eq(rental[:daily_rate])
+      end
     end
   end
 
@@ -98,29 +123,47 @@ RSpec.describe 'Api::Rentals', type: :request do
       }.to_json
     end
 
-    before do
-      patch "/api/rentals/#{rental.id}", params: rental_params, headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        patch "/api/rentals/#{rental.id}", params: rental_params
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'responds with a 200 http status code' do
-      expect(response).to have_http_status(200)
-    end
+    context 'when authenticated' do
+      before do
+        patch "/api/rentals/#{rental.id}", params: rental_params, headers: headers
+      end
 
-    it 'updates rental attributes' do
-      expect(json_response['data']['attributes']['name']).to eq(updated_name)
-      expect(json_response['data']['attributes']['daily-rate']).to eq(updated_daily_rate)
+      it 'responds with a 200 http status code' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'updates rental attributes' do
+        expect(json_response['data']['attributes']['name']).to eq(updated_name)
+        expect(json_response['data']['attributes']['daily-rate']).to eq(updated_daily_rate)
+      end
     end
   end
 
   describe 'DELETE /api/rentals/:id' do
     let(:rental) { create(:rental) }
 
-    before do
-      delete "/api/rentals/#{rental.id}", headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        delete "/api/rentals/#{rental.id}"
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'deletes the rental' do
-      expect(response).to have_http_status(204)
+    context 'when authenticated' do
+      before do
+        delete "/api/rentals/#{rental.id}", headers: headers
+      end
+
+      it 'deletes the rental' do
+        expect(response).to have_http_status(204)
+      end
     end
   end
 end

@@ -7,24 +7,40 @@ RSpec.describe 'Api::Bookings', type: :request do
   let(:object_hash) { serializer.object_hash(Api::BookingResource.new(booking, nil)) }
 
   describe 'GET /api/bookings' do
-    before do
-      create_list(:booking, 10)
-      get '/api/bookings', headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        get '/api/bookings'
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'responds with a 200 http status code' do
-      expect(response).to have_http_status(200)
-    end
+    context 'when authenticated' do
+      before do
+        create_list(:booking, 10)
+        get '/api/bookings', headers: headers
+      end
 
-    it 'returns all bookings' do
-      expect(json_response['data'].length).to eq(10)
+      it 'responds with a 200 http status code' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'returns all bookings' do
+        expect(json_response['data'].length).to eq(10)
+      end
     end
   end
 
   describe 'GET /api/bookings/:id' do
-    context 'when looking for existing booking' do
-      let(:booking) { create(:booking) }
+    let(:booking) { create(:booking) }
 
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        get "/api/bookings/#{booking.id}"
+        expect(response).to have_http_status(401)
+      end
+    end
+
+    context 'when authenticated and looking for existing booking' do
       before do
         get "/api/bookings/#{booking.id}", headers: headers
       end
@@ -46,7 +62,7 @@ RSpec.describe 'Api::Bookings', type: :request do
       end
     end
 
-    context 'when looking for a non existing booking' do
+    context 'when authenticated and when looking for a non existing booking' do
       before { get '/api/bookings/9999', headers: headers }
 
       it 'responds with a 404 http status code' do
@@ -67,24 +83,33 @@ RSpec.describe 'Api::Bookings', type: :request do
       }.to_json
     end
 
-    before do
-      post '/api/bookings', params: booking_params, headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        post '/api/bookings', params: booking_params
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'responds with a 201 http status code' do
-      expect(response).to have_http_status(201)
-    end
+    context 'when authenticated' do
+      before do
+        post '/api/bookings', params: booking_params, headers: headers
+      end
 
-    it 'creates a new booking' do
-      expect(json_response['data']['type']).to eq('bookings')
-      expect(json_response['data']['type']).not_to be_nil
-    end
+      it 'responds with a 201 http status code' do
+        expect(response).to have_http_status(201)
+      end
 
-    it 'sets booking attributes' do
-      expect(json_response['data']['attributes']['client-email']).to eq(booking[:client_email])
-      expect(json_response['data']['attributes']['start-at']).to eq(booking[:start_at].to_s)
-      expect(json_response['data']['attributes']['end-at']).to eq(booking[:end_at].to_s)
-      expect(json_response['data']['attributes']['price']).to eq(100)
+      it 'creates a new booking' do
+        expect(json_response['data']['type']).to eq('bookings')
+        expect(json_response['data']['type']).not_to be_nil
+      end
+
+      it 'sets booking attributes' do
+        expect(json_response['data']['attributes']['client-email']).to eq(booking[:client_email])
+        expect(json_response['data']['attributes']['start-at']).to eq(booking[:start_at].to_s)
+        expect(json_response['data']['attributes']['end-at']).to eq(booking[:end_at].to_s)
+        expect(json_response['data']['attributes']['price']).to eq(100)
+      end
     end
   end
 
@@ -106,30 +131,48 @@ RSpec.describe 'Api::Bookings', type: :request do
       }.to_json
     end
 
-    before do
-      patch "/api/bookings/#{booking.id}", params: booking_params, headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        patch "/api/bookings/#{booking.id}", params: booking_params
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'responds with a 200 http status code' do
-      expect(response).to have_http_status(200)
-    end
+    context 'when authenticated' do
+      before do
+        patch "/api/bookings/#{booking.id}", params: booking_params, headers: headers
+      end
 
-    it 'updates booking attributes' do
-      expect(json_response['data']['attributes']['client-email']).to eq(updated_client_email)
-      expect(json_response['data']['attributes']['start-at']).to eq(updated_start_at)
-      expect(json_response['data']['attributes']['end-at']).to eq(updated_end_at)
+      it 'responds with a 200 http status code' do
+        expect(response).to have_http_status(200)
+      end
+
+      it 'updates booking attributes' do
+        expect(json_response['data']['attributes']['client-email']).to eq(updated_client_email)
+        expect(json_response['data']['attributes']['start-at']).to eq(updated_start_at)
+        expect(json_response['data']['attributes']['end-at']).to eq(updated_end_at)
+      end
     end
   end
 
   describe 'DELETE /api/bookings/:id' do
     let(:booking) { create(:booking) }
 
-    before do
-      delete "/api/bookings/#{booking.id}", headers: headers
+    context 'when not authenticated' do
+      it 'responds with a 401 http status code' do
+        delete "/api/bookings/#{booking.id}"
+        expect(response).to have_http_status(401)
+      end
     end
 
-    it 'deletes the booking' do
-      expect(response).to have_http_status(204)
+    context 'when authenticated' do
+      before do
+        delete "/api/bookings/#{booking.id}", headers: headers
+      end
+
+      it 'deletes the booking' do
+        expect(response).to have_http_status(204)
+      end
     end
   end
 end
