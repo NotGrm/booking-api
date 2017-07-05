@@ -1,2 +1,2 @@
-class Api::RentalsController < JSONAPI::ResourceController
+class Api::RentalsController < Api::BaseController
 end

@@ -1,2 +1,2 @@
-class Api::BookingsController < JSONAPI::ResourceController
+class Api::BookingsController < Api::BaseController
 end
